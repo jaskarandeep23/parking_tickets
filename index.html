@@ -1,30 +1,47 @@
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Winnipeg Parking Ticket Search</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Winnipeg Parking Ticket Search</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<header>
-<h1>Winnipeg Parking Ticket Search</h1>
-<p>Search tickets by offence or location</p>
-</header>
+  <header class="site-header">
+    <div class="container">
+      <h1>Winnipeg Parking Ticket Search</h1>
+      <p class="subtitle">Search parking tickets by offence or location (dataset: <code>bhrt-29rb</code>).</p>
+    </div>
+  </header>
 
+  <main class="container" id="main">
+    <section class="search-section" aria-labelledby="search-heading">
+      <h2 id="search-heading" class="visually-hidden">Search parking tickets</h2>
 
-<main>
-<form id="search-form">
-<label for="query">Search term:</label>
-<input id="query" type="text" placeholder="e.g. FIRE LANE or MAIN ST" required>
-<button type="submit">Search</button>
-</form>
+      <form id="search-form" class="search-form" aria-describedby="help">
+        <label for="query">Search term (offence or location)</label>
+        <input id="query" name="query" type="search" placeholder="e.g. FIRE LANE or MAIN ST" required
+               aria-required="true" />
+        <button id="search-btn" type="submit">Search</button>
+        <p id="help" class="help-text">Searches offence description and location (case-insensitive). Shows top 100 results ordered by fine amount.</p>
+      </form>
+    </section>
 
+    <section class="status" aria-live="polite" id="status"></section>
 
-<div id="results" aria-live="polite"></div>
-<div id="error" role="status" aria-live="assertive"></div>
-</main>
+    <section id="results" class="results" aria-live="polite" aria-label="Search results">
+      <!-- Table inserted here -->
+    </section>
 
+    <div id="error" class="error" role="status" aria-live="assertive"></div>
+  </main>
 
-<script src="script.js" defer></script>
+  <footer class="site-footer">
+    <div class="container">
+      <small>Data source: City of Winnipeg Open Data — <code>bhrt-29rb</code></small>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
 </body>
 </html>

@@ -26,7 +26,7 @@ async function fetchTickets(searchTerm) {
   const where = `lower(offence_description) LIKE lower('%${searchTerm}%') OR lower(location) LIKE lower('%${searchTerm}%')`;
 
   const order = 'set_fine_amount DESC';
-  const limit = 100;
+  const limit = 10;
 
   
   const params = [
@@ -36,8 +36,8 @@ async function fetchTickets(searchTerm) {
     `$limit=${limit}`
   ].join('&');
 
-  const apiUrl = `${endpoint}?${params}`;
-
+  const apiUrl = `${endpoint}?$limit=10`;
+console.log('TEST API URL ->', apiUrl);
   try {
     const response = await fetch(apiUrl);
     if (!response.ok) {
@@ -45,6 +45,7 @@ async function fetchTickets(searchTerm) {
       throw new Error(`Network error: ${response.status} ${response.statusText}`);
     }
     const data = await response.json();
+    console.log('Returned rows (from fetchTickets):', Array.isArray(data) ? data.length : typeof data, data);
     return data;
   } catch (err) {
     
@@ -130,7 +131,7 @@ form.addEventListener('submit', async (e) => {
 
   const rawQuery = queryInput.value.trim();
   if (!rawQuery) {
-    setError('Please enter a search term.');
+    setError('parking');
     return;
   }
 

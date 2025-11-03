@@ -1,0 +1,79 @@
+# Debugging Steps — Parking Tickets App
+
+This file documents three debugger breakpoints required by the assignment. For each breakpoint there are two screenshots: the paused state and the state after stepping.
+
+---
+
+## Breakpoint 1 — Before the API request
+**Location in code:** `fetchTickets()` — the line that performs `fetch(apiUrl)`
+
+**Why:** Verify the constructed URL and inputs before sending the network request.
+
+**Screenshot (paused):** `screenshot1.png`  
+**Screenshot (after stepping):** `screenshot1_after.png`
+
+**What I inspected:**
+- `searchTerm` = `<fill in the term you used>`  
+- `endpoint` = `https://data.winnipeg.ca/resource/bhrt-29rb.json`  
+- `apiUrl` (encoded) = `<paste full URL shown in DevTools>`
+
+**Observations:**
+- The `apiUrl` was formed properly and encoded.
+- After stepping the response object showed `status: 200` (OK).
+
+---
+
+## Breakpoint 2 — After parsing the API response
+**Location in code:** `fetchTickets()` — at `const data = await response.json();`
+
+**Why:** Confirm the JSON was parsed correctly and inspect result size and structure.
+
+**Screenshot (paused):** `screenshot2.png`  
+**Screenshot (after stepping):** `screenshot2_after.png`
+
+**What I inspected:**
+- `data.length` = `<number>`  
+- Example `data[0]` fields: `ticket_number`, `contravention_date`, `set_fine_amount`, `offence_description`
+
+**Observations:**
+- The dataset returned `<data.length>` records for the query.
+- `set_fine_amount` may be returned as a string; I convert it to Number when rendering.
+
+---
+
+## Breakpoint 3 — At start of renderTable(data)
+**Location in code:** `renderTable(data)` — first line of function
+
+**Why:** Ensure table columns are correct and DOM insertion behaves as expected.
+
+**Screenshot (paused):** `screenshot3.png`  
+**Screenshot (after stepping):** `screenshot3_after.png`
+
+**What I inspected:**
+- `data` argument and its length  
+- `columns` array used to render the table  
+- After stepping: the `<table>` is appended to `#results` and the first row values match expected ticket fields
+
+**Observations:**
+- Table is created and appended as expected. Values appear formatted (date and numeric fine formatted).
+
+---
+
+## Detailed analysis of a critical state (Breakpoint 2)
+**State inspected:** After parsing JSON (`data`).
+
+**What it revealed:**  
+`data.length` was `<number>` and the first result showed `set_fine_amount` as a string (e.g., `"85.00"`). This is important because client-side numeric operations require numeric types. Although server ordering used SoQL (`$order=set_fine_amount DESC`) ensured correct ordering here, client-side conversions are necessary for future calculations.
+
+**Action taken:**  
+In `renderTable()` I defensively convert `set_fine_amount` into a Number before formatting with `toFixed(2)`. If a numeric conversion fails the code falls back to `0` or blank display.
+
+---
+
+## Notes & how to reproduce
+1. Run a local server (recommended): `python -m http.server 8000` and open `http://localhost:8000`.  
+2. Open DevTools ► Sources ► open `script.js` ► set breakpoints on the indicated lines.  
+3. Enter a search term (e.g., `FIRE LANE`) and submit to trigger breakpoints.  
+4. Save the screenshots in this folder and commit them.
+
+Commit message for this addition: `Finalized debugging analysis of assignment`
